@@ -25,7 +25,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.platform.LocalDensity
 
-
 @Composable
 fun SelectableText(
     modifier: Modifier = Modifier,
@@ -38,11 +37,7 @@ fun SelectableText(
             onValueChange = { },
             maxLines = 3,
             textStyle = TextStyle(
-                color = if (onError.value) {
-                    Color.Red
-                } else {
-                    Color.Black
-                },
+                color = if (onError.value) { Color.Red } else { Color.Black },
                 fontSize = 35.sp,
                 textAlign = TextAlign.End,
             ),
@@ -141,46 +136,21 @@ fun NumPadExpend(
         ) {
             SingleBoard(requireSize = requireSize, char = "Xⁿ", onClick = { onClick("^") })
             SingleBoard(requireSize = requireSize, char = "arc", onClick = arcClick)
-            SingleBoard(requireSize = requireSize,
-                char = if (arc.value) {
-                    "asin"
-                } else {
-                    "sin"
-                }, onClick = {
-                    onClick(
-                        if (arc.value) {
-                            "asin("
-                        } else {
-                            "sin("
-                        }
-                    )
-                })
-            SingleBoard(requireSize = requireSize, char = if (arc.value) {
-                "acos"
-            } else {
-                "cos"
-            }, onClick = {
-                onClick(
-                    if (arc.value) {
-                        "acos("
-                    } else {
-                        "cos("
-                    }
-                )
-            })
-            SingleBoard(requireSize = requireSize, char = if (arc.value) {
-                "atan"
-            } else {
-                "tan"
-            }, onClick = {
-                onClick(
-                    if (arc.value) {
-                        "atan("
-                    } else {
-                        "tan("
-                    }
-                )
-            })
+            SingleBoard(
+                requireSize = requireSize,
+                char = if (arc.value) { "asin" } else { "sin" },
+                onClick = { onClick(if (arc.value) { "asin(" } else { "sin(" }) }
+            )
+            SingleBoard(
+                requireSize = requireSize,
+                char = if (arc.value) { "acos" } else { "cos" },
+                onClick = { onClick(if (arc.value) { "acos(" } else { "cos(" }) }
+            )
+            SingleBoard(
+                requireSize = requireSize,
+                char = if (arc.value) { "atan" } else { "tan" },
+                onClick = { onClick(if (arc.value) { "atan(" } else { "tan(" }) }
+            )
         }
         Row(
             horizontalArrangement = Arrangement.SpaceEvenly,

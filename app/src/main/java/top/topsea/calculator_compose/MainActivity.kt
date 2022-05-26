@@ -78,6 +78,7 @@ fun NumPad(
             "=" -> {
                 try {
                     val finalFormula = formula.value.replace("√", "sqrt")
+                        .replace("×", "*")
 
                     val e: Expression = ExpressionBuilder(finalFormula)
                         .function(ln)

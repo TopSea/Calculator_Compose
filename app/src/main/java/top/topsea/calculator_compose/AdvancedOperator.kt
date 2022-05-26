@@ -5,16 +5,6 @@ import net.objecthunter.exp4j.function.Function
 import kotlin.math.ln
 import kotlin.math.log10
 
-/**
- * @ProjectName:    Calculator_Compose
- * @Package:        top.topsea.calculator_compose
- * @Description:    AdvancedOperator
- * @Author:         TopSea
- * @AboutAuthor:    https://github.com/TopSea
- * @CreateDate:     2022/5/25 9:32
- **/
-
-
 val factorial: Operator = object : Operator("!", 1, true, PRECEDENCE_POWER + 1) {
     override fun apply(vararg args: Double): Double {
         val arg = args[0].toInt()
