@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -28,12 +29,12 @@ import androidx.compose.ui.platform.LocalDensity
 @Composable
 fun SelectableText(
     modifier: Modifier = Modifier,
-    formula: MutableState<String>,
+    formulaComponent: SnapshotStateList<String>,
     onError: MutableState<Boolean>,
 ) {
     SelectionContainer {
         TextField(
-            value = formula.value,
+            value = getFormula(formulaComponent),
             onValueChange = { },
             maxLines = 3,
             textStyle = TextStyle(
@@ -321,4 +322,15 @@ fun SingleBoard(
             )
         }
     }
+}
+
+fun getFormula(formulaComponent : SnapshotStateList<String>): String {
+    if (formulaComponent.size <= 0) {
+        return ""
+    }
+    val builder = StringBuilder("")
+    for (str in formulaComponent) {
+        builder.append(str)
+    }
+    return builder.toString()
 }

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -30,7 +31,7 @@ class MainActivity : ComponentActivity() {
                     systemUiController.setSystemBarsColor(Color.White, darkIcons = darkIcons)
                 }
 
-                val formula = remember { mutableStateOf("") }
+                val formulaComponent = remember { mutableStateListOf("") }
                 val onError = remember { mutableStateOf(false) }
 
                 Scaffold(
@@ -48,14 +49,14 @@ class MainActivity : ComponentActivity() {
                     ) {
 
                         SelectableText(
-                            formula = formula,
+                            formulaComponent = formulaComponent,
                             onError = onError
                         )
 
                         Divider(modifier = Modifier.fillMaxWidth())
 
                         NumPad(
-                            formula = formula,
+                            formulaComponent = formulaComponent,
                             onError = onError
                         )
                     }
@@ -68,7 +69,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun NumPad(
     modifier: Modifier = Modifier,
-    formula: MutableState<String>,
+    formulaComponent: SnapshotStateList<String>,
     onError: MutableState<Boolean>,
 ) {
     val expend = remember { mutableStateOf(false) }
@@ -77,7 +78,7 @@ fun NumPad(
         when (value) {
             "=" -> {
                 try {
-                    val finalFormula = formula.value.replace("√", "sqrt")
+                    val finalFormula = getFormula(formulaComponent).replace("√", "sqrt")
                         .replace("×", "*")
 
                     val e: Expression = ExpressionBuilder(finalFormula)
@@ -85,22 +86,29 @@ fun NumPad(
                         .function(lg)
                         .operator(factorial)
                         .build()
-                    formula.value = e.evaluate().toString()
+                    val result = e.evaluate().toString()
+                    if (result == "NaN") {
+                        onError.value = true
+                    }
+                    formulaComponent.clear()
+                    formulaComponent.add(result)
                 } catch (e: Exception) {
                     onError.value = true
-                    formula.value = "Error!"
+                    formulaComponent.clear()
+                    formulaComponent.add("Error!")
                 }
             }
             "C" -> {
-                formula.value = ""
+                formulaComponent.clear()
             }
             else -> {
                 if (onError.value) {
-                    formula.value = "$value"
+                    formulaComponent.clear()
+                    formulaComponent.add("$value")
                     onError.value = false
                 } else {
-                    if (formula.value.length < 36) {
-                        formula.value += value
+                    if (getFormula(formulaComponent).length < 36) {
+                        formulaComponent.add("$value")
                     }
                 }
             }
@@ -109,15 +117,14 @@ fun NumPad(
     val onClickAdvanced: (value : Any) -> Unit = { value: Any ->
         when (value) {
             R.drawable.ic_backspace -> {
-                val last = formula.value.last().toString()
-                formula.value = formula.value.removeSuffix(last)
+                formulaComponent.removeLast()
             }
             R.drawable.ic_more -> {
                 expend.value = !expend.value
             }
             else -> {
-                if (formula.value.length < 36) {
-                    formula.value += value
+                if (getFormula(formulaComponent).length < 36) {
+                    formulaComponent.add("$value")
                 }
             }
         }
